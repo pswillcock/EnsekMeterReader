@@ -28,7 +28,6 @@ namespace ENSEK_Meter_Reader.CrudBackend.Csv {
         /// <param name="csvFile">TextReader that reads smart meter data from the CSV file.</param>
         /// <returns></returns>
         public CsvParseResult<MeterReading> ParseCsvFile(TextReader csvFile) {
-            int lineParseSuccessCount = 0;
             int lineParseFailCount = 0;
             var meterReadings = new List<MeterReading>();
 
@@ -80,7 +79,6 @@ namespace ENSEK_Meter_Reader.CrudBackend.Csv {
                                 }
                             }
 
-                            lineParseSuccessCount += 1;
                             meterReadings.Add(meterReading);
                         }
                         catch {
@@ -97,8 +95,7 @@ namespace ENSEK_Meter_Reader.CrudBackend.Csv {
             }
 
             return new CsvParseResult<MeterReading> {
-                LineParseSuccessCount = lineParseSuccessCount,
-                LineParseFailureCount = lineParseFailCount,
+                ErrorCount = lineParseFailCount,
                 Data = meterReadings
             };
         }

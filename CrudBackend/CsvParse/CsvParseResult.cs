@@ -6,8 +6,7 @@ namespace ENSEK_Meter_Reader.CrudBackend.Csv {
     /// </summary>
     /// <typeparam name="T">Output object type extracted from the CSV file.</typeparam>
     public class CsvParseResult<T> {
-        public int LineParseSuccessCount { get; set; }
-        public int LineParseFailureCount { get; set; }
+        public int ErrorCount { get; set; }
         public ICollection<T> Data { get; set; }
     }
 }

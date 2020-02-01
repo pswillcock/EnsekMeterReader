@@ -1,4 +1,5 @@
 ﻿using ENSEK_Meter_Reader.CrudBackend.Csv;
+using ENSEK_Meter_Reader.CrudBackend.Database;
 using ENSEK_Meter_Reader_Server.Models;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,13 @@ namespace ENSEK_Meter_Reader.CrudBackend {
             MeterReadingCsvParser parser = new MeterReadingCsvParser();
             CsvParseResult<MeterReading> parseResult = parser.ParseCsvFile(csvFile);
 
+            MeterReadingDbTableInterface meterReadingTable = new MeterReadingDbTableInterface();
+            DbResult insertResult = meterReadingTable.InsertEntries(parseResult.Data);
 
-
-            return null;
+            return new CsvUploadResult {
+                RowInsertCount = insertResult.InsertCount,
+                ErrorCount = parseResult.ErrorCount + insertResult.ErrorCount
+            };
         }
     }
 }
