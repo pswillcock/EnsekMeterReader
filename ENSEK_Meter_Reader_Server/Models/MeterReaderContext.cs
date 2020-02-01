@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace ENSEK_Meter_Reader_Server.Models {
-    public class MeterReadingContext : DbContext {
+    public class MeterReaderContext : DbContext {
         public virtual DbSet<CustomerAccount> Accounts { get; set; }
         public virtual DbSet<MeterReading> MeterReadings { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
