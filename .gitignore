@@ -4,3 +4,4 @@ obj
 *.ldf
 *.mdf
 appsettings.json
+wwwroot/Upload
