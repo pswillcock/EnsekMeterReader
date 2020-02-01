@@ -10,6 +10,11 @@ namespace ENSEK_Meter_Reader.CrudBackend.Database {
     /// </summary>
     /// <typeparam name="T">Entity Framework model type for the database table.</typeparam>
     interface IDbTableInterface<T> {
-        DbResult UpsertEntries(ICollection<T> data);
+        /// <summary>
+        /// Inserts data into the database if it is unique otherwise ignores it.
+        /// </summary>
+        /// <param name="data">Data to insert.</param>
+        /// <returns>DbResult detailing the result of the insert operation.</returns>
+        DbResult InsertEntries(ICollection<T> data);
     }
 }

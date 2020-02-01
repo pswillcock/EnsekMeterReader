@@ -1,4 +1,5 @@
 ﻿using ENSEK_Meter_Reader.CrudBackend.Csv;
+using ENSEK_Meter_Reader_Server.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,7 +20,9 @@ namespace ENSEK_Meter_Reader.CrudBackend {
         /// <returns>CsvUploadResult detailing the number of entries which succeeded and failed to load.</returns>
         public CsvUploadResult UploadCsvFile(TextReader csvFile) {
             MeterReadingCsvParser parser = new MeterReadingCsvParser();
-            parser.ParseCsvFile(csvFile);
+            CsvParseResult<MeterReading> parseResult = parser.ParseCsvFile(csvFile);
+
+
 
             return null;
         }

@@ -50,7 +50,7 @@ namespace ENSEK_Meter_Reader.CrudBackend.Csv {
 
                                 switch (heading) {
                                     case ACCOUNT_HEADING:
-                                        meterReading.AccountId = Int32.Parse(value);
+                                        meterReading.AccountId = value;
 
                                         break;
 
