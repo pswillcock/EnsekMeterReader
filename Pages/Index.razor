@@ -3,7 +3,7 @@
 @using CrudBackend;
 @using System.IO;
 
-@inject CsvParserService csvParser
+@inject CsvUploadService csvParser
 
 
 <FileUpload CustomSuccessMessage="Your file uploaded successfully." OnChange="OnFileUploaded"
@@ -19,7 +19,7 @@
 
     private void OnFileUploaded(UploadedFileInfo uploadFileInfo) {
         using (StreamReader sr = new StreamReader(uploadFileInfo.FullPath)) {
-            csvParser.LoadCsvFile(sr);
+            csvParser.UploadCsvFile(sr);
 
             status = "worked";
         }
