@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ENSEK_Meter_Reader.CrudBackend.Csv;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,9 +15,12 @@ namespace ENSEK_Meter_Reader.CrudBackend {
         /// <summary>
         /// Extract data from a CSV file and populate the associated database table.
         /// </summary>
-        /// <param name="csvStream">TextReader object which reads in the contents of the CSV file.</param>
+        /// <param name="csvFile">TextReader object which reads in the contents of the CSV file.</param>
         /// <returns>CsvUploadResult detailing the number of entries which succeeded and failed to load.</returns>
-        public CsvUploadResult UploadCsvFile(TextReader csvStream) {
+        public CsvUploadResult UploadCsvFile(TextReader csvFile) {
+            MeterReadingCsvParser parser = new MeterReadingCsvParser();
+            parser.ParseCsvFile(csvFile);
+
             return null;
         }
     }

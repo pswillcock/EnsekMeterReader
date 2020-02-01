@@ -13,7 +13,6 @@ namespace ENSEK_Meter_Reader_Server.Models {
 
         public string LastName { get; set; }
 
-        [ForeignKey("ReadingId")]
         public List<MeterReading> MeterReadings { get; set; }
     }
 }
