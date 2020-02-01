@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ENSEK_Meter_Reader", "ENSEK_Meter_Reader.csproj", "{F71BC632-1BF8-449D-AC83-4DB9E1F6F663}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F71BC632-1BF8-449D-AC83-4DB9E1F6F663}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F71BC632-1BF8-449D-AC83-4DB9E1F6F663}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F71BC632-1BF8-449D-AC83-4DB9E1F6F663}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F71BC632-1BF8-449D-AC83-4DB9E1F6F663}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FDF25545-2001-4862-BD01-B1292751B03A}
+	EndGlobalSection
+EndGlobal

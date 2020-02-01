@@ -1,0 +1,31 @@
+﻿@page "/"
+@using DataJuggler.Blazor.FileUpload;
+@using CrudBackend;
+@using System.IO;
+
+@inject CsvParserService csvParser
+
+
+<FileUpload CustomSuccessMessage="Your file uploaded successfully." OnChange="OnFileUploaded"
+            ShowStatus="false" PartialGuidLength="10" MaxFileSize="4194304" FilterByExtension="true"
+            AllowedExtensions=".csv;" ShowResetButton="true" OnReset="OnReset"
+            CustomExtensionMessage="Only .csv files are allowed." AppendPartialGuid="true"
+            FileTooLargeMessage="The file uploaded must be 4 megabytes or smaller.">
+</FileUpload>
+
+@status
+@code {
+    string status;
+
+    private void OnFileUploaded(UploadedFileInfo uploadFileInfo) {
+        using (StreamReader sr = new StreamReader(uploadFileInfo.FullPath)) {
+            csvParser.LoadCsvFile(sr);
+
+            status = "worked";
+        }
+    }
+
+    private void OnReset() {
+
+    }
+}
