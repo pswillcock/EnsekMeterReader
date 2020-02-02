@@ -19,21 +19,12 @@ namespace ENSEK_Meter_Reader.CrudBackend.Database {
         /// <returns>DbResult detailing the result of the insert operation.</returns>
         public DbResult InsertEntries(ICollection<CustomerAccount> accounts) {
             using (var context = new MeterReaderContext()) {
-                DatabaseFacade db = context.Database;
- 
-                try {
-                    db.OpenConnection();
-                    db.ExecuteSqlRaw("SET IDENTITY_INSERT Accounts ON");
-                    context.Accounts.AddRange(accounts);
-                    context.SaveChanges();
-                }
-                finally {
-                    db.ExecuteSqlRaw("SET IDENTITY_INSERT Accounts OFF");
-                    db.CloseConnection();
-                }
+                int initialRowCount = context.Accounts.Count();
 
-                int insertCount = context.ChangeTracker.Entries<CustomerAccount>()
-                    .Count(e => e.State == EntityState.Added);
+                context.BulkMerge(accounts);
+
+                int finalRowCount = context.Accounts.Count();
+                int insertCount = finalRowCount - initialRowCount;
 
                 return new DbResult {
                     InsertCount = insertCount,

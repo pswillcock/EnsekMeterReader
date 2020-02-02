@@ -7,7 +7,7 @@ namespace ENSEK_Meter_Reader_Server.Models {
     [Table("Accounts")]
     public class CustomerAccount {
         [Key]
-        public string AccountId { get; set; }
+        public string Id { get; set; }
 
         public string FirstName { get; set; }
 

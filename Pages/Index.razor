@@ -7,10 +7,10 @@
 
 
 <FileUpload CustomSuccessMessage="Your file uploaded successfully." OnChange="OnFileUploaded"
-            ShowStatus="false" PartialGuidLength="10" MaxFileSize="4194304" FilterByExtension="true"
-            AllowedExtensions=".csv;" ShowResetButton="true" OnReset="OnReset"
-            CustomExtensionMessage="Only .csv files are allowed." AppendPartialGuid="true"
-            FileTooLargeMessage="The file uploaded must be 4 megabytes or smaller.">
+    ShowStatus="false" PartialGuidLength="10" MaxFileSize="4194304" FilterByExtension="true"
+    AllowedExtensions=".csv;" ShowResetButton="true" OnReset="OnReset"
+    CustomExtensionMessage="Only .csv files are allowed." AppendPartialGuid="true"
+    FileTooLargeMessage="The file uploaded must be 4 megabytes or smaller.">
 </FileUpload>
 
 @status
@@ -19,10 +19,12 @@
 
     private void OnFileUploaded(UploadedFileInfo uploadFileInfo) {
         using (StreamReader sr = new StreamReader(uploadFileInfo.FullPath)) {
-            csvParser.UploadCsvFile(sr);
+            CsvUploadResult result = csvParser.UploadCsvFile(sr);
 
-            status = "worked";
+            status = String.Format("Loaded: {0}, Failed: {1}", result.RowInsertCount, result.ErrorCount);
         }
+
+        File.Delete(uploadFileInfo.FullPath);
     }
 
     private void OnReset() {

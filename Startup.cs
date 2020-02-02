@@ -1,20 +1,63 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ENSEK_Meter_Reader.CrudBackend;
+using ENSEK_Meter_Reader.CrudBackend.CsvParse;
+using ENSEK_Meter_Reader.CrudBackend.Database;
+using ENSEK_Meter_Reader_Server.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace ENSEK_Meter_Reader {
     public class Startup {
+
+        private const string CUSTOMER_CSV_FILE_PATH = "Resources/Test_Accounts.csv";
+
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
+
+            InitializeDatabase();
+        }
+        
+        /// <summary>
+        /// Creates necessary database tables and seeds initial data.
+        /// </summary>
+        private void InitializeDatabase() {
+            using (var context = new MeterReaderContext()) {
+                DatabaseFacade db = context.Database;
+                RelationalDatabaseCreator databaseCreator = (RelationalDatabaseCreator)db.GetService<IDatabaseCreator>();
+
+                try {
+                    databaseCreator.Create();                   
+                }
+                catch {
+                    // Database already exists
+                }
+                try {
+                    databaseCreator.CreateTables();
+                }
+                catch {
+                    // Tables already exist
+                }
+                
+                using (StreamReader accountsCsv = new StreamReader(CUSTOMER_CSV_FILE_PATH)) {
+                    CustomerAccountCsvParser csvParser = new CustomerAccountCsvParser();
+                    CsvParseResult<CustomerAccount> accounts = csvParser.ParseCsvFile(accountsCsv);
+
+                    CustomerAccountDbTableInterface accountsTable = new CustomerAccountDbTableInterface();
+                    accountsTable.InsertEntries(accounts.Data);
+                }
+            }
         }
 
         public IConfiguration Configuration { get; }

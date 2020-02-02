@@ -15,21 +15,5 @@ namespace ENSEK_Meter_Reader_Server.Models {
 
         [ForeignKey("AccountId")]
         public CustomerAccount Account { get; set; }
-
-        /// <summary>
-        /// Converts a string of the format "dd/mm/yyyy hh:mm" to a Unix timestamp and stores it in Timestamp.
-        /// </summary>
-        /// <param name="timeDateString">Date time string to convert.</param>
-        /// <returns>True if the conversion succeeded else false.</returns>
-        public bool StoreTimestampFromString(string timeDateString) {
-            DateTime dateTime;
-            bool dateParseSuccess = DateTime.TryParse(timeDateString, out dateTime);
-
-            if (dateParseSuccess) {
-                Timestamp = new DateTimeOffset(dateTime).ToUnixTimeSeconds();
-            }
-
-            return dateParseSuccess;
-        }
     }
 }

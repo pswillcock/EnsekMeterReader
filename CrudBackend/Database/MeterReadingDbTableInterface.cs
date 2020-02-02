@@ -16,21 +16,35 @@ namespace ENSEK_Meter_Reader.CrudBackend.Database {
         /// <returns>DbResult detailing the result of the insert operation.</returns>
         public DbResult InsertEntries(ICollection<MeterReading> meterReadings) {
             using (var context = new MeterReaderContext()) {
-                foreach(MeterReading meterReading in meterReadings) {
-                    meterReading.Id = GenerateMeterReadingId(meterReading);
+                IEnumerable<MeterReading> validReadings = RemoveInvalidReadings(meterReadings, context);
+
+                foreach(MeterReading reading in validReadings) {
+                    reading.Id = GenerateMeterReadingId(reading);
                 }
 
-                context.MeterReadings.AddRange(meterReadings);
-                context.SaveChanges();
+                int initialRowCount = context.MeterReadings.Count();
 
-                int insertCount = context.ChangeTracker.Entries<MeterReading>()
-                    .Count(e => e.State == EntityState.Added);
+                context.BulkMerge(validReadings);
+
+                int finalRowCount = context.MeterReadings.Count();
+                int insertCount = finalRowCount - initialRowCount;
 
                 return new DbResult {
                     InsertCount = insertCount,
                     ErrorCount = meterReadings.Count - insertCount
                 };
             }
+        }
+
+        /// <summary>
+        /// Returns the filtered subset of meter readings that have a valid Account ID.
+        /// </summary>
+        /// <param name="readings">Meter readings to filter.</param>
+        /// <returns>Valid meter readings subset.</returns>
+        private IEnumerable<MeterReading> RemoveInvalidReadings(ICollection<MeterReading> readings, MeterReaderContext context) {
+            IEnumerable<string> actualAccountIds = context.Accounts.Select(account => account.Id);
+
+            return readings.Where(reading => actualAccountIds.Contains(reading.AccountId));
         }
 
         /// <summary>

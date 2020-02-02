@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ENSEK_Meter_Reader.CrudBackend.Csv {
+namespace ENSEK_Meter_Reader.CrudBackend.CsvParse {
     /// <summary>
     /// Countainer class for the result of extracting data from a CSV file.
     /// </summary>
