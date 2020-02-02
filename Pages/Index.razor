@@ -85,7 +85,7 @@
     }
 
     private async Task OnReset() {
-        resetDisabled = false;
+        resetDisabled = true;
 
         statusStyle = INFO_STYLE;
         statusMessage = "Clearing all stored meter readings...";
@@ -103,7 +103,7 @@
             statusMessage = "Error: Failed to delete all meter readings.";
         }
 
-        resetDisabled = true;
+        resetDisabled = false;
     }
 
 }
