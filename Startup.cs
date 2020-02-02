@@ -67,7 +67,12 @@ namespace ENSEK_Meter_Reader {
         public void ConfigureServices(IServiceCollection services) {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<CsvUploadService>();
+
+            CsvUploadService csvUploadService = new CsvUploadService(
+                new MeterReadingCsvParser(),
+                new MeterReadingDbTableInterface()
+            );
+            services.AddSingleton(typeof(CsvUploadService), csvUploadService);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

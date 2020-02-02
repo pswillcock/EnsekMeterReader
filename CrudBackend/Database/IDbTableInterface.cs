@@ -9,7 +9,7 @@ namespace ENSEK_Meter_Reader.CrudBackend.Database {
     /// Interface to be implemented by classes which perform SQL operations on a single database table.
     /// </summary>
     /// <typeparam name="T">Entity Framework model type for the database table.</typeparam>
-    interface IDbTableInterface<T> {
+    public interface IDbTableInterface<T> {
         /// <summary>
         /// Asynchronously inserts data into the database if it is unique otherwise ignores it.
         /// </summary>
