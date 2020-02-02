@@ -1,2 +1,2 @@
 # EnsekMeterReader
-Web API for reading smart meter data from a CSV file and storing in the cloud.
+Web API for CRUD (Create, Read, Update, Delete) app which reads smart meter data from a CSV file and stores in a cloud hosted SQL database.
