@@ -10,24 +10,59 @@
     <InputFile OnChange=OnFileUploaded />
 </div>
 
-@statusMessage
+@if (statusMessage.Length > 0) {
+    <div class="alert @statusStyle" style="width: max-content">
+        @statusMessage
+    </div>
+}
 
 @code {
-    string statusMessage;
+    const int MAX_FILE_SIZE = 10000000;
+    const string CSV_EXTENSION = "csv";
+
+    const string SUCCESS_STYLE = "alert-success";
+    const string INFO_STYLE = "alert-info";
+    const string ERROR_STYLE = "alert-danger";
+
+    string statusStyle = "";
+    string statusMessage = "";
 
     private async Task OnFileUploaded(IFileListEntry[] uploadedFiles) {
         if (uploadedFiles.Length != 1) {
-            statusMessage = "Please upload a single file.";
+            statusStyle = ERROR_STYLE;
+            statusMessage = "Error: Please upload a single file.";
         }
-
         else {
-            statusMessage = "Reading CSV file contents...";
-            this.StateHasChanged();
+            IFileListEntry file = uploadedFiles[0];
+            string fileExtension = file.Name.Split('.').LastOrDefault();
 
-            using (StreamReader file = new StreamReader(uploadedFiles[0].Data)) {
-                CsvUploadResult result = await csvParser.UploadCsvFileAsync(file);
+            if (file.Size > MAX_FILE_SIZE) {
+                statusStyle = ERROR_STYLE;
+                statusMessage = "Error: Input file size cannot exceed 10MB.";
+            }
 
-                statusMessage = String.Format("Loaded: {0}, Failed: {1}", result.RowInsertCount, result.ErrorCount);
+            else if (fileExtension != CSV_EXTENSION) {
+                statusStyle = ERROR_STYLE;
+                statusMessage = "Error: Input must be a CSV file.";
+            }
+
+            else {
+                statusStyle = INFO_STYLE;
+                statusMessage = "Reading CSV file contents...";
+                this.StateHasChanged();
+
+                using (StreamReader fileStream = new StreamReader(file.Data)) {
+                    CsvUploadResult result = await csvParser.UploadCsvFileAsync(fileStream);
+
+                    if (result.RowInsertCount == 0) {
+                        statusStyle = ERROR_STYLE;
+                        statusMessage = String.Format("Error: All {0} readings failed to load.", result.ErrorCount);
+                    }
+                    else {
+                        statusStyle = SUCCESS_STYLE;
+                        statusMessage = String.Format("Successfully loaded {0} readings.<br/>Failed to load {1} readings.", result.RowInsertCount, result.ErrorCount);
+                    }
+                }
             }
         }
     }
