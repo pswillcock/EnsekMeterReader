@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using BlazorInputFile;
 @using CrudBackend;
+@using CrudBackend.Database;
 @using System.IO;
 
 @inject CsvUploadService csvParser
@@ -10,11 +11,15 @@
     <InputFile OnChange=OnFileUploaded />
 </div>
 
-@if (statusMessage.Length > 0) {
-    <div class="alert @statusStyle" style="width: max-content">
-        @statusMessage
-    </div>
-}
+<button @onclick="OnReset">Clear Meter Readings</button>
+
+<div style="padding-top: 25px">
+    @if (statusMessage.Length > 0) {
+        <div class="alert @statusStyle" style="width: max-content">
+            @statusMessage
+        </div>
+    }
+</div>
 
 @code {
     const int MAX_FILE_SIZE = 10000000;
@@ -60,10 +65,29 @@
                     }
                     else {
                         statusStyle = SUCCESS_STYLE;
-                        statusMessage = String.Format("Successfully loaded {0} readings.<br/>Failed to load {1} readings.", result.RowInsertCount, result.ErrorCount);
+                        statusMessage = String.Format("Successfully loaded {0} readings. Failed to load {1} readings.", result.RowInsertCount, result.ErrorCount);
                     }
                 }
             }
         }
     }
+
+    private async Task OnReset() {
+        statusStyle = INFO_STYLE;
+        statusMessage = "Clearing all stored meter readings...";
+        this.StateHasChanged();
+
+        var meterReadingTable = new MeterReadingDbTableInterface();
+        bool deleteSuccess = await meterReadingTable.ClearTableAsync();
+
+        if (deleteSuccess) {
+            statusStyle = SUCCESS_STYLE;
+            statusMessage = "All meter readings successfully deleted.";
+        }
+        else {
+            statusStyle = ERROR_STYLE;
+            statusMessage = "Error: Failed to delete all meter readings.";
+        }
+    }
+
 }

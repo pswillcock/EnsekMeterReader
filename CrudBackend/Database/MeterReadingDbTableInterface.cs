@@ -37,6 +37,18 @@ namespace ENSEK_Meter_Reader.CrudBackend.Database {
         }
 
         /// <summary>
+        /// Removes all entries from the meter readings table.
+        /// </summary>
+        /// <returns>True if all entries were deleted else false.</returns>
+        public async Task<bool> ClearTableAsync() {
+            using (var context = new MeterReaderContext()) {
+                await context.BulkDeleteAsync(context.MeterReadings);
+
+                return context.MeterReadings.Count() == 0;
+            }
+        }
+
+        /// <summary>
         /// Returns the filtered subset of meter readings that have a valid Account ID.
         /// </summary>
         /// <param name="readings">Meter readings to filter.</param>
