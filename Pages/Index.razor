@@ -6,19 +6,21 @@
 
 @inject CsvUploadService csvParser
 
-<div class="drag-drop-zone">
-    <span>Drop meter reading CSV file here.</span>
-    <InputFile OnChange=OnFileUploaded />
-</div>
+<div class="centered">
+    <div class="drag-drop-zone">
+        <span>Drop meter reading CSV file here.</span>
+        <InputFile OnChange=OnFileUploaded />
+    </div>
 
-<button @onclick="OnReset" disabled="@resetDisabled">Clear Meter Readings</button>
+    <button @onclick="OnReset" disabled="@resetDisabled">Clear Meter Readings</button>
 
-<div style="padding-top: 25px">
-    @if (statusMessage.Length > 0) {
-        <div class="alert @statusStyle" style="width: max-content">
-            @statusMessage
-        </div>
-    }
+    <div style="padding-top: 25px">
+        @if (statusMessage.Length > 0) {
+            <div class="alert @statusStyle" style="width: max-content">
+                @statusMessage
+            </div>
+        }
+    </div>
 </div>
 
 @code {
