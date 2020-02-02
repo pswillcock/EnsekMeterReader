@@ -40,13 +40,13 @@ namespace ENSEK_Meter_Reader {
                 try {
                     databaseCreator.Create();                   
                 }
-                catch {
+                catch (Exception e) {
                     // Database already exists
                 }
                 try {
                     databaseCreator.CreateTables();
                 }
-                catch {
+                catch (Exception e) {
                     // Tables already exist
                 }
                 

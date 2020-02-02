@@ -11,7 +11,7 @@
     <InputFile OnChange=OnFileUploaded />
 </div>
 
-<button @onclick="OnReset">Clear Meter Readings</button>
+<button @onclick="OnReset" disabled="@resetDisabled">Clear Meter Readings</button>
 
 <div style="padding-top: 25px">
     @if (statusMessage.Length > 0) {
@@ -31,8 +31,11 @@
 
     string statusStyle = "";
     string statusMessage = "";
+    bool resetDisabled = false;
 
     private async Task OnFileUploaded(IFileListEntry[] uploadedFiles) {
+        resetDisabled = true;
+
         if (uploadedFiles.Length != 1) {
             statusStyle = ERROR_STYLE;
             statusMessage = "Error: Please upload a single file.";
@@ -61,18 +64,27 @@
 
                     if (result.RowInsertCount == 0) {
                         statusStyle = ERROR_STYLE;
-                        statusMessage = String.Format("Error: All {0} readings failed to load.", result.ErrorCount);
+                        if (result.ErrorCount == 0) {
+                            statusMessage = "Error: No valid meter readings found.";
+                        }
+                        else {
+                            statusMessage = String.Format("Error: All {0} meter readings failed to load.", result.ErrorCount);
+                        }
                     }
                     else {
                         statusStyle = SUCCESS_STYLE;
-                        statusMessage = String.Format("Successfully loaded {0} readings. Failed to load {1} readings.", result.RowInsertCount, result.ErrorCount);
+                        statusMessage = String.Format("Successfully loaded {0} meter readings. Failed to load {1} meter readings.", result.RowInsertCount, result.ErrorCount);
                     }
                 }
             }
         }
+
+        resetDisabled = false;
     }
 
     private async Task OnReset() {
+        resetDisabled = false;
+
         statusStyle = INFO_STYLE;
         statusMessage = "Clearing all stored meter readings...";
         this.StateHasChanged();
@@ -88,6 +100,8 @@
             statusStyle = ERROR_STYLE;
             statusMessage = "Error: Failed to delete all meter readings.";
         }
+
+        resetDisabled = true;
     }
 
 }
