@@ -1,33 +1,34 @@
 ﻿@page "/"
-@using DataJuggler.Blazor.FileUpload;
+@using BlazorInputFile;
 @using CrudBackend;
 @using System.IO;
 
 @inject CsvUploadService csvParser
 
+<div class="drag-drop-zone">
+    <span>Drop meter reading CSV file here.</span>
+    <InputFile OnChange=OnFileUploaded />
+</div>
 
-<FileUpload CustomSuccessMessage="Your file uploaded successfully." OnChange="OnFileUploaded"
-    ShowStatus="false" PartialGuidLength="10" MaxFileSize="4194304" FilterByExtension="true"
-    AllowedExtensions=".csv;" ShowResetButton="true" OnReset="OnReset"
-    CustomExtensionMessage="Only .csv files are allowed." AppendPartialGuid="true"
-    FileTooLargeMessage="The file uploaded must be 4 megabytes or smaller.">
-</FileUpload>
+@statusMessage
 
-@status
 @code {
-    string status;
+    string statusMessage;
 
-    private void OnFileUploaded(UploadedFileInfo uploadFileInfo) {
-        using (StreamReader sr = new StreamReader(uploadFileInfo.FullPath)) {
-            CsvUploadResult result = csvParser.UploadCsvFile(sr);
-
-            status = String.Format("Loaded: {0}, Failed: {1}", result.RowInsertCount, result.ErrorCount);
+    private async Task OnFileUploaded(IFileListEntry[] uploadedFiles) {
+        if (uploadedFiles.Length != 1) {
+            statusMessage = "Please upload a single file.";
         }
 
-        File.Delete(uploadFileInfo.FullPath);
-    }
+        else {
+            statusMessage = "Reading CSV file contents...";
+            this.StateHasChanged();
 
-    private void OnReset() {
+            using (StreamReader file = new StreamReader(uploadedFiles[0].Data)) {
+                CsvUploadResult result = await csvParser.UploadCsvFileAsync(file);
 
+                statusMessage = String.Format("Loaded: {0}, Failed: {1}", result.RowInsertCount, result.ErrorCount);
+            }
+        }
     }
 }

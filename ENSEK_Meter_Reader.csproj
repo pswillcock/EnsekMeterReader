@@ -11,8 +11,4 @@
     <PackageReference Include="Z.EntityFramework.Extensions.EFCore" Version="3.0.42" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\Upload\" />
-  </ItemGroup>
-
 </Project>

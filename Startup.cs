@@ -32,7 +32,7 @@ namespace ENSEK_Meter_Reader {
         /// <summary>
         /// Creates necessary database tables and seeds initial data.
         /// </summary>
-        private void InitializeDatabase() {
+        private async Task InitializeDatabase() {
             using (var context = new MeterReaderContext()) {
                 DatabaseFacade db = context.Database;
                 RelationalDatabaseCreator databaseCreator = (RelationalDatabaseCreator)db.GetService<IDatabaseCreator>();
@@ -52,10 +52,10 @@ namespace ENSEK_Meter_Reader {
                 
                 using (StreamReader accountsCsv = new StreamReader(CUSTOMER_CSV_FILE_PATH)) {
                     CustomerAccountCsvParser csvParser = new CustomerAccountCsvParser();
-                    CsvParseResult<CustomerAccount> accounts = csvParser.ParseCsvFile(accountsCsv);
+                    CsvParseResult<CustomerAccount> accounts = await csvParser.ParseCsvFileAsync(accountsCsv);
 
                     CustomerAccountDbTableInterface accountsTable = new CustomerAccountDbTableInterface();
-                    accountsTable.InsertEntries(accounts.Data);
+                    await accountsTable.InsertEntriesAsync(accounts.Data);
                 }
             }
         }

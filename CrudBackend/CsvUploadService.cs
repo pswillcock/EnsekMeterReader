@@ -19,12 +19,12 @@ namespace ENSEK_Meter_Reader.CrudBackend {
         /// </summary>
         /// <param name="csvFile">TextReader object which reads in the contents of the CSV file.</param>
         /// <returns>CsvUploadResult detailing the number of entries which succeeded and failed to load.</returns>
-        public CsvUploadResult UploadCsvFile(TextReader csvFile) {
+        public async Task<CsvUploadResult> UploadCsvFileAsync(TextReader csvFile) {
             MeterReadingCsvParser parser = new MeterReadingCsvParser();
-            CsvParseResult<MeterReading> parseResult = parser.ParseCsvFile(csvFile);
+            CsvParseResult<MeterReading> parseResult = await parser.ParseCsvFileAsync(csvFile);
 
             MeterReadingDbTableInterface meterReadingTable = new MeterReadingDbTableInterface();
-            DbResult insertResult = meterReadingTable.InsertEntries(parseResult.Data);
+            DbResult insertResult = await meterReadingTable.InsertEntriesAsync(parseResult.Data);
 
             return new CsvUploadResult {
                 RowInsertCount = insertResult.InsertCount,

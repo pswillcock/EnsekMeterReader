@@ -20,13 +20,13 @@ namespace ENSEK_Meter_Reader.CrudBackend.CsvParse {
         /// </summary>
         /// <param name="csvFile">TextReader that reads data from the CSV file.</param>
         /// <returns>CsvDataExtractionResult containing extracted data and error count.</returns>
-        public CsvParseResult<T> ParseCsvFile(TextReader csvFile) {
-            string headerRow = csvFile.ReadLine();
+        public async Task<CsvParseResult<T>> ParseCsvFileAsync(TextReader csvFile) {
+            string headerRow = await csvFile.ReadLineAsync();
             string[] meterReadingColumnHeadings = headerRow.Split(',');
 
             bool columnHeadingsValid = VerifyColumnHeadings(meterReadingColumnHeadings);
             if (columnHeadingsValid) {
-                return GenerateObjects(csvFile, meterReadingColumnHeadings);
+                return await GenerateObjects(csvFile, meterReadingColumnHeadings);
             }
             else {
                 return new CsvParseResult<T> {
@@ -62,11 +62,11 @@ namespace ENSEK_Meter_Reader.CrudBackend.CsvParse {
         /// <param name="csvFile">TextReader streaming CSV data.</param>
         /// <param name="meterReadingColumnHeadings">Array of column headings from first line of the CSV file.</param>
         /// <returns></returns>
-        private CsvParseResult<T> GenerateObjects(TextReader csvFile, string[] meterReadingColumnHeadings) {
+        private async Task<CsvParseResult<T>> GenerateObjects(TextReader csvFile, string[] meterReadingColumnHeadings) {
             List<T> objects = new List<T>();
             int lineParseFailCount = 0;
 
-            string line = csvFile.ReadLine();
+            string line = await csvFile.ReadLineAsync();
             while (line != null) {
                 T t = new T();
                 string[] meterReadingValues = line.Split(',');
@@ -90,7 +90,7 @@ namespace ENSEK_Meter_Reader.CrudBackend.CsvParse {
                     lineParseFailCount += 1;
                 }
 
-                line = csvFile.ReadLine();
+                line = await csvFile.ReadLineAsync();
             }
 
             return new CsvParseResult<T> {

@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 namespace ENSEK_Meter_Reader.CrudBackend.Database {
     public class MeterReadingDbTableInterface : IDbTableInterface<MeterReading> {
         /// <summary>
-        /// Inserts meter reading data into the database if it is unique otherwise ignores it.
+        /// Asynchronously inserts meter reading data into the database if it is unique otherwise ignores it.
         /// </summary>
         /// <param name="meterReadings">Meter reading data to insert.</param>
         /// <returns>DbResult detailing the result of the insert operation.</returns>
-        public DbResult InsertEntries(ICollection<MeterReading> meterReadings) {
+        public async Task<DbResult> InsertEntriesAsync(ICollection<MeterReading> meterReadings) {
             using (var context = new MeterReaderContext()) {
                 IEnumerable<MeterReading> validReadings = RemoveInvalidReadings(meterReadings, context);
 
@@ -24,7 +24,7 @@ namespace ENSEK_Meter_Reader.CrudBackend.Database {
 
                 int initialRowCount = context.MeterReadings.Count();
 
-                context.BulkMerge(validReadings);
+                await context.BulkMergeAsync(validReadings);
 
                 int finalRowCount = context.MeterReadings.Count();
                 int insertCount = finalRowCount - initialRowCount;

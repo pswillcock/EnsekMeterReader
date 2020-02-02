@@ -13,15 +13,15 @@ namespace ENSEK_Meter_Reader.CrudBackend.Database {
     /// </summary>
     public class CustomerAccountDbTableInterface : IDbTableInterface<CustomerAccount> {
         /// <summary>
-        /// Inserts account data into the database if it is unique otherwise ignores it.
+        /// Asynchronously inserts account data into the database if it is unique otherwise ignores it.
         /// </summary>
         /// <param name="accounts">Account data to insert.</param>
         /// <returns>DbResult detailing the result of the insert operation.</returns>
-        public DbResult InsertEntries(ICollection<CustomerAccount> accounts) {
+        public async Task<DbResult> InsertEntriesAsync(ICollection<CustomerAccount> accounts) {
             using (var context = new MeterReaderContext()) {
                 int initialRowCount = context.Accounts.Count();
 
-                context.BulkMerge(accounts);
+                await context.BulkMergeAsync(accounts);
 
                 int finalRowCount = context.Accounts.Count();
                 int insertCount = finalRowCount - initialRowCount;
