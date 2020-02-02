@@ -86,7 +86,7 @@ namespace ENSEK_Meter_Reader.CrudBackend.CsvParse {
                     objects.Add(t);
                 }
 
-                catch {
+                catch (Exception e) {
                     lineParseFailCount += 1;
                 }
 

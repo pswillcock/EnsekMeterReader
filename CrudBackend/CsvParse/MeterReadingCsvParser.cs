@@ -15,6 +15,8 @@ namespace ENSEK_Meter_Reader.CrudBackend.CsvParse {
         private const string METER_READING_TIME_HEADING = "MeterReadingDateTime";
         private const string METER_VALUE_HEADING = "MeterReadValue";
 
+        private const string CSV_DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm";
+
         public MeterReadingCsvParser() {
             PropertySetters = new Dictionary<string, Action<MeterReading, string>> {
                 { ACCOUNT_HEADING, SetAccountId },
@@ -31,7 +33,7 @@ namespace ENSEK_Meter_Reader.CrudBackend.CsvParse {
         }
 
         private void SetTimestamp(MeterReading reading, string dateTimeString) {
-            DateTime dateTime = DateTime.Parse(dateTimeString);
+            DateTime dateTime = DateTime.ParseExact(dateTimeString, CSV_DATE_TIME_FORMAT, null);
             reading.Timestamp = new DateTimeOffset(dateTime).ToUnixTimeSeconds();
         }
 
