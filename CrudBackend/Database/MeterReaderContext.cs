@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,12 +13,22 @@ namespace ENSEK_Meter_Reader_Server.Models {
         public virtual DbSet<MeterReading> MeterReadings { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder options) {
             if (!options.IsConfigured) {
-#if DEBUG
-                string rootPath = AppDomain.CurrentDomain.BaseDirectory.Split("\\bin")[0];
-                options.UseSqlServer(@"Data Source = (LocalDB)\MSSQLLocalDB; AttachDbFilename = " + rootPath + @"\CrudBackend\Database\ENSEK_Meter_Reader_LocalDb.mdf; Initial Catalog=meterReaderDB; Integrated Security = True; Connect Timeout = 30;");
+                using (StreamReader appSettingsFile = File.OpenText(@"appsettings.json")) {
+                    string text = appSettingsFile.ReadToEnd();
+                    JObject jObject = JObject.Parse(text);
+
+                    JToken connectionStrings = jObject["ConnectionStrings"];
+#if DEBUG                
+                    string localConnectionString = connectionStrings["LocalConnection"].ToString();
+                    string rootPath = AppDomain.CurrentDomain.BaseDirectory.Split("\\bin")[0];
+                    localConnectionString = localConnectionString.Replace("<root>", rootPath);
+
+                    options.UseSqlServer(localConnectionString);
 #else
-                options.UseSqlServer(@"Data Source=ensekmeterreader-paulwillcockdbserver.database.windows.net;Initial Catalog=ENSEKMeterReader-PaulWillcock_db;User ID=paul.willcock;Password=L3mm1ng5!;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-#endif
+                    string remoteConnectionString = connectionStrings["RemoteConnection"].ToString();
+                    options.UseSqlServer(remoteConnectionString);
+#endif                    
+                }
             }
         }
     }
