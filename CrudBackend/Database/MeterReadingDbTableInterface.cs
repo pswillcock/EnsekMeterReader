@@ -18,21 +18,29 @@ namespace ENSEK_Meter_Reader.CrudBackend.Database {
             using (var context = new MeterReaderContext()) {
                 IEnumerable<MeterReading> validReadings = RemoveInvalidReadings(meterReadings, context);
 
-                foreach(MeterReading reading in validReadings) {
-                    reading.Id = GenerateMeterReadingId(reading);
+                try {
+                    foreach (MeterReading reading in validReadings) {
+                        reading.Id = GenerateMeterReadingId(reading);
+                    }
+
+                    int initialRowCount = context.MeterReadings.Count();
+
+                    await context.BulkMergeAsync(validReadings);
+
+                    int finalRowCount = context.MeterReadings.Count();
+                    int insertCount = finalRowCount - initialRowCount;
+
+                    return new DbResult {
+                        InsertCount = insertCount,
+                        ErrorCount = meterReadings.Count - insertCount
+                    };
                 }
-
-                int initialRowCount = context.MeterReadings.Count();
-
-                await context.BulkMergeAsync(validReadings);
-
-                int finalRowCount = context.MeterReadings.Count();
-                int insertCount = finalRowCount - initialRowCount;
-
-                return new DbResult {
-                    InsertCount = insertCount,
-                    ErrorCount = meterReadings.Count - insertCount
-                };
+                catch (Exception e) {
+                    return new DbResult {
+                        InsertCount = 0,
+                        ErrorCount = meterReadings.Count
+                    };
+                }  
             }
         }
 
